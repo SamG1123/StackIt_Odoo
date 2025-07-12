@@ -31,12 +31,14 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    setNotifications([
-      { id: 1, message: "Someone replied to your question", read: false },
-      { id: 2, message: "Someone commented on your answer", read: false },
-      { id: 3, message: "You were mentioned in a post", read: true },
-    ]);
-  }, []);
+    const fetchNotifications = async () => {
+    const res = await fetch("/api/notifications/me"); // GET for logged-in user
+    const data = await res.json();
+    setNotifications(data.notifications);
+  };
+
+    if (isLoggedIn) fetchNotifications();
+  }, [isLoggedIn]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
