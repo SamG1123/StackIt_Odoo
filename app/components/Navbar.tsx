@@ -14,8 +14,10 @@ export default function Navbar() {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isAvatarOpen, setIsAvatarOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const bellRef = useRef<HTMLButtonElement>(null);
   const avatarRef = useRef<HTMLButtonElement>(null);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -41,19 +43,19 @@ export default function Navbar() {
   const handleLogout = () => {
     localStorage.removeItem("stackit_loggedIn");
     setIsAvatarOpen(false);
-    router.refresh(); // Refresh the page to update navbar state
+    router.push("/"); // Refresh page to update navbar state
   };
 
   return (
-    <header className="dark:bg-slate-900 backdrop-blur">
-      <div className="container mx-auto px-4 py-4">
+    <header className="relative z-50 dark:bg-slate-900 backdrop-blur">
+      <div className="container mx-auto px-4 py-4 overflow-visible">
         <div className="flex items-center justify-between">
           <Link href="/" className="text-2xl font-bold">
             StackIt
           </Link>
 
-          <div className="flex items-center gap-4">
-            {/* Search icon (mobile) */}
+          <div className="flex items-center gap-4 relative z-50">
+            {/* Search icon (optional, mobile only) */}
             <Button variant="ghost" size="icon" className="sm:hidden">
               <Search className="h-5 w-5" />
             </Button>
@@ -65,6 +67,7 @@ export default function Navbar() {
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsNotifOpen((prev) => !prev)}
+                aria-label="Notifications"
               >
                 <Bell className="h-5 w-5" />
                 {unreadCount > 0 && (
@@ -85,12 +88,13 @@ export default function Navbar() {
 
             {/* Avatar or Login */}
             {isLoggedIn ? (
-              <div className="relative z-[999]">
+              <div className="relative z-[9999]">
                 <Button
                   ref={avatarRef}
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsAvatarOpen((prev) => !prev)}
+                  aria-label="User menu"
                 >
                   <Image
                     src="/avatar.png"
@@ -102,7 +106,7 @@ export default function Navbar() {
                 </Button>
 
                 {isAvatarOpen && (
-                  <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-slate-800 rounded shadow-lg z-[9999] border border-slate-200 dark:border-slate-700">
+                  <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-slate-800 rounded shadow-lg z-[10000] border border-slate-200 dark:border-slate-700">
                     <ul className="divide-y divide-gray-200 dark:divide-gray-700 text-sm">
                       <li>
                         <button
