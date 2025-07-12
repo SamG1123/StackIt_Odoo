@@ -86,7 +86,7 @@ export default function AskQuestionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-50 to-purple-200 dark:bg-zinc-900 dark:text-white py-12">
+    <div className="min-h-screen  dark:bg-zinc-900 dark:text-white py-12">
       <div className="container mx-auto px-4">
         <Card className="mx-auto max-w-4xl bg-white/90 border-2 border-purple-200 shadow-lg rounded-3xl dark:bg-zinc-800 dark:border-zinc-700">
           <CardHeader>

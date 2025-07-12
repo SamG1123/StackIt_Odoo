@@ -12,10 +12,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff, Loader2, Pencil } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
-/* endpoint of your app router handler */
 const SIGNUP_ENDPOINT = "/api/signup";
 
-/* mirror your route‑level requirements */
 const SignupSchema = z.object({
   email: z.string().email("Invalid email"),
   username: z.string().min(1, "Username is required"),
@@ -30,15 +28,13 @@ export default function SignupPage() {
   const [showPw, setShowPw] = useState(false);
   const [form, setForm] = useState({ email: "", username: "", password: "" });
 
-  const handleChange =
-    (field: "email" | "username" | "password") =>
+  const onChange =
+    (f: "email" | "username" | "password") =>
     (e: React.ChangeEvent<HTMLInputElement>) =>
-      setForm({ ...form, [field]: e.target.value });
+      setForm({ ...form, [f]: e.target.value });
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-
-    /* client‑side validation */
     const parsed = SignupSchema.safeParse(form);
     if (!parsed.success) {
       toast({
@@ -58,7 +54,6 @@ export default function SignupPage() {
       });
 
       const data = await res.json().catch(() => ({}));
-
       if (!res.ok) throw new Error(data.message || "Signup failed");
 
       toast({ title: "Account created! You can log in now." });
@@ -75,8 +70,8 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#dbaf57] text-black dark:bg-zinc-900 dark:text-white px-4">
-      <Card className="w-full max-w-md bg-white dark:bg-zinc-800">
+    <div className="flex min-h-screen items-center justify-center  dark:bg-slate-900 dark:text-white px-4">
+      <Card className="w-full max-w-md bg-white dark:bg-slate-800">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-2xl">
             <Pencil className="h-6 w-6" /> Sign up for StackIt
@@ -93,10 +88,10 @@ export default function SignupPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="Enter the email address"
+                placeholder="you@example.com"
                 required
                 value={form.email}
-                onChange={handleChange("email")}
+                onChange={onChange("email")}
               />
             </div>
 
@@ -107,10 +102,10 @@ export default function SignupPage() {
               </label>
               <Input
                 id="username"
-                placeholder="Enter the username"
+                placeholder="Choose a username"
                 required
                 value={form.username}
-                onChange={handleChange("username")}
+                onChange={onChange("username")}
               />
             </div>
 
@@ -123,10 +118,10 @@ export default function SignupPage() {
                 <Input
                   id="password"
                   type={showPw ? "text" : "password"}
-                  placeholder="Enter the password"
+                  placeholder="At least 8 characters"
                   required
                   value={form.password}
-                  onChange={handleChange("password")}
+                  onChange={onChange("password")}
                   className="pr-11"
                 />
                 <button
@@ -144,7 +139,11 @@ export default function SignupPage() {
             </div>
 
             {/* SUBMIT */}
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button
+              type="submit"
+              className="w-full bg-teal-600 hover:bg-teal-700 dark:bg-cyan-600 dark:hover:bg-cyan-700"
+              disabled={loading}
+            >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Create Account
             </Button>

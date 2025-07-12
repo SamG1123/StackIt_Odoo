@@ -1,3 +1,4 @@
+/* app/page.tsx */
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -18,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
-import { isLoggedIn } from "@/lib/auth"; // ← NEW
+import { isLoggedIn } from "@/lib/auth";
 
 interface Question {
   _id: string;
@@ -30,97 +31,85 @@ interface Question {
   createdAt: string;
 }
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
+const fetcher = (u: string) => fetch(u).then((r) => r.json());
 
 export default function HomePage() {
   const { toast } = useToast();
-
-  /* fetch questions ---------------------------------------------------- */
   const { data, error, isLoading } = useSWR<Question[]>(
     "/api/questions",
     fetcher
   );
 
   useEffect(() => {
-    if (error) {
-      toast({
-        variant: "destructive",
-        title: "Failed to load questions",
-      });
-    }
+    if (error)
+      toast({ variant: "destructive", title: "Failed to load questions" });
   }, [error]);
 
-  /* ui state ----------------------------------------------------------- */
+  /* ui state */
   const [sortBy, setSortBy] = useState("newest");
   const [selectedTag, setSelectedTag] = useState("__all__");
   const [searchQuery, setSearchQuery] = useState("");
   const [tagSearchQuery, setTagSearchQuery] = useState("");
 
-  /* unique tags -------------------------------------------------------- */
-  const availableTags = useMemo(
+  /* data helpers */
+  const tags = useMemo(
     () => (data ? [...new Set(data.flatMap((q) => q.tags))] : []),
     [data]
   );
 
-  /* sorting ------------------------------------------------------------ */
   const sorted = useMemo(() => {
     if (!data) return [];
-    const copy = [...data];
+    const list = [...data];
     switch (sortBy) {
       case "newest":
-        return copy.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        return list.sort(
+          (a, b) => +new Date(b.createdAt) - +new Date(a.createdAt)
         );
       case "unanswered":
-        return copy.filter((q) => q.answers === 0);
+        return list.filter((q) => q.answers === 0);
       case "popular":
-        return copy.sort((a, b) => b.answers - a.answers);
+        return list.sort((a, b) => b.answers - a.answers);
       default:
-        return copy;
+        return list;
     }
   }, [data, sortBy]);
 
-  /* filter ------------------------------------------------------------- */
-  const filteredQuestions = useMemo(() => {
+  const visible = useMemo(() => {
     let out = sorted;
     if (selectedTag !== "__all__")
       out = out.filter((q) => q.tags.includes(selectedTag));
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       out = out.filter(
-        (it) =>
-          it.title.toLowerCase().includes(q) ||
-          it.description.toLowerCase().includes(q) ||
-          it.tags.some((t) => t.toLowerCase().includes(q))
+        (x) =>
+          x.title.toLowerCase().includes(q) ||
+          x.description.toLowerCase().includes(q) ||
+          x.tags.some((t) => t.toLowerCase().includes(q))
       );
     }
     return out;
   }, [sorted, selectedTag, searchQuery]);
 
-  /* tag search inside dropdown ---------------------------------------- */
-  const filteredTags = useMemo(() => {
-    if (!tagSearchQuery) return availableTags;
-    return availableTags.filter((t) =>
-      t.toLowerCase().includes(tagSearchQuery.toLowerCase())
-    );
-  }, [availableTags, tagSearchQuery]);
+  const tagOpts = !tagSearchQuery
+    ? tags
+    : tags.filter((t) =>
+        t.toLowerCase().includes(tagSearchQuery.toLowerCase())
+      );
 
-  /* ------------------------------------------------------------------- */
   const askHref = isLoggedIn() ? "/ask" : "/login?next=/ask";
 
+  /* UI --------------------------------------------------------------- */
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-100 via-pink-50 to-purple-200 dark:bg-zinc-900">
+    <div className="min-h-screen flex flex-col  dark:bg-slate-900">
       <div className="container mx-auto flex-1 px-6 py-8">
-        {/* Action bar ---------------------------------------------------- */}
+        {/* action bar */}
         <div className="mb-8 flex flex-col gap-6 sm:flex-row">
           <Link href={askHref}>
-            <Button className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-full px-8 py-3 dark:bg-blue-600 dark:hover:bg-blue-700">
+            <Button className="w-full sm:w-auto bg-teal-600 hover:bg-teal-700 text-white rounded-full px-8 py-3 dark:bg-cyan-600 dark:hover:bg-cyan-700">
               Ask New Question
             </Button>
           </Link>
 
-          {/* sort + tag filter */}
           <div className="flex flex-1 gap-6">
             <Select value={sortBy} onValueChange={setSortBy}>
               <SelectTrigger className="w-36 rounded-full">
@@ -150,7 +139,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 <SelectItem value="__all__">All Tags</SelectItem>
-                {filteredTags.map((tag) => (
+                {tagOpts.map((tag) => (
                   <SelectItem key={tag} value={tag}>
                     {tag}
                   </SelectItem>
@@ -159,7 +148,7 @@ export default function HomePage() {
             </Select>
           </div>
 
-          {/* full‑text search */}
+          {/* global search */}
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2" />
             <Input
@@ -171,23 +160,23 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Question list ------------------------------------------------- */}
+        {/* list */}
         <div className="mb-10 space-y-6">
           {isLoading &&
             Array.from({ length: 3 }).map((_, i) => (
               <Skeleton key={i} className="h-36 rounded-3xl" />
             ))}
 
-          {filteredQuestions.map((q) => (
+          {visible.map((q) => (
             <Card
               key={q._id}
-              className="rounded-3xl bg-white/80 backdrop-blur-sm border-2 border-purple-200 hover:shadow-xl transition"
+              className="rounded-3xl bg-white/80 backdrop-blur-sm border border-teal-200 hover:shadow-lg transition dark:bg-slate-800 dark:border-slate-700"
             >
               <CardContent className="p-8">
                 <div className="flex items-start gap-6 justify-between">
                   <div className="flex-1">
                     <Link href={`/questions/${q._id}`}>
-                      <h3 className="mb-2 text-lg font-semibold hover:text-purple-600 dark:hover:text-blue-400">
+                      <h3 className="mb-2 text-lg font-semibold hover:text-teal-700 dark:hover:text-cyan-400">
                         {q.title}
                       </h3>
                     </Link>
@@ -200,7 +189,7 @@ export default function HomePage() {
                       {q.tags.map((tag) => (
                         <Badge
                           key={tag}
-                          className="rounded-full px-4 py-1 bg-purple-100 border border-purple-300"
+                          className="rounded-full px-4 py-1 bg-teal-50 border border-teal-200 text-teal-800 dark:bg-slate-700 dark:border-slate-600 dark:text-gray-200"
                         >
                           {tag}
                         </Badge>
@@ -220,7 +209,7 @@ export default function HomePage() {
                   </div>
 
                   <div className="text-center">
-                    <div className="rounded-3xl bg-purple-600 text-white px-6 py-4">
+                    <div className="rounded-3xl bg-[#8F87F1] text-white px-6 py-4 dark:from-cyan-600 dark:to-cyan-700">
                       <div className="text-xl font-bold">{q.answers}</div>
                       <div className="text-sm opacity-90">answers</div>
                     </div>
@@ -230,14 +219,14 @@ export default function HomePage() {
             </Card>
           ))}
 
-          {!isLoading && filteredQuestions.length === 0 && (
-            <p className="text-center text-gray-500 dark:text-gray-400">
+          {!isLoading && visible.length === 0 && (
+            <p className="text-center text-gray-600 dark:text-gray-400">
               No questions found.
             </p>
           )}
         </div>
 
-        {/* (static) pagination placeholder ------------------------------ */}
+        {/* (static) pagination */}
         <div className="flex items-center justify-center gap-2 pt-4">
           <Button size="icon" disabled>
             <ChevronLeft className="h-5 w-5" />
