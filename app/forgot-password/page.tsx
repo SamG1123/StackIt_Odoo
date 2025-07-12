@@ -78,7 +78,7 @@ export default function ForgotPasswordPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder="Enter the email address"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -95,7 +95,7 @@ export default function ForgotPasswordPage() {
             </Button>
 
             <p className="text-center text-sm">
-              Remembered?{" "}
+              Wanna go back?{" "}
               <Link href="/login" className="font-medium hover:underline">
                 Back to login
               </Link>
