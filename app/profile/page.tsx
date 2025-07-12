@@ -17,6 +17,12 @@ interface Question {
   answeredByUser?: boolean;
 }
 
+interface LoggedInUser {
+  id: string;
+  username: string;
+  email: string;
+}
+
 // Custom SVG Icons
 const QuestionIcon = ({ className }: { className?: string }) => (
   <svg className={className} fill="currentColor" viewBox="0 0 20 20">
@@ -131,6 +137,7 @@ const ClockIcon = ({ className }: { className?: string }) => (
 export default function ProfilePage() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [activeTab, setActiveTab] = useState<"profile" | "activity">("profile");
+  const [user, setUser] = useState<LoggedInUser | null>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -138,6 +145,10 @@ export default function ProfilePage() {
       if (data) {
         const parsed: Question[] = JSON.parse(data);
         setQuestions(parsed);
+      }
+      const userData = localStorage.getItem("stackit_user");
+      if (userData) {
+        setUser(JSON.parse(userData));
       }
     }
   }, []);
@@ -169,10 +180,10 @@ export default function ProfilePage() {
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                   <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                    Current User
+                    {user?.username ?? "Current User"}
                   </h1>
                   <p className="text-gray-600 dark:text-gray-300 text-lg mb-3">
-                    Enthusiastic learner and knowledge sharer
+                    {user?.email ?? "Enthusiastic learner and knowledge sharer"}
                   </p>
                   <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                     <div className="flex items-center gap-1">
