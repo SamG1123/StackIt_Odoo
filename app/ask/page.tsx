@@ -14,10 +14,10 @@ import { Badge } from "@/components/ui/badge";
 import { RichTextEditor } from "@/components/rich-text-editor";
 
 export default function AskQuestionPage() {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
-  const [tagInput, setTagInput] = useState("");
+  const [tagInput, setTagInput] = useState<string>("");
 
   const addTag = (tag: string) => {
     if (tag.trim() && !tags.includes(tag.trim())) {
@@ -26,38 +26,93 @@ export default function AskQuestionPage() {
     }
   };
 
-  const removeTag = (tag: string) => setTags(tags.filter((t) => t !== tag));
+  const removeTag = (tagToRemove: string) => {
+    setTags(tags.filter((tag) => tag !== tagToRemove));
+  };
 
-  const handleTagKeyPress = (e: React.KeyboardEvent) => {
+  const handleTagKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
       addTag(tagInput);
     }
   };
 
+  const handleSubmit = () => {
+    if (!title.trim() || !description.trim()) {
+      alert("Please fill in both title and description");
+      return;
+    }
+
+    if (tags.length === 0) {
+      alert("Please add at least one tag");
+      return;
+    }
+
+    interface Question {
+      id: number;
+      title: string;
+      description: string;
+      tags: string[];
+      user: string;
+      answers: number;
+      timeAgo: string;
+    }
+
+    const newQuestion: Question = {
+      id: Date.now(),
+      title: title.trim(),
+      description: description.trim(),
+      tags: tags,
+      user: "Current User",
+      answers: 0,
+      timeAgo: "Just now",
+    };
+
+    // Get existing questions from sessionStorage
+    const existingQuestions: Question[] = JSON.parse(
+      (typeof window !== "undefined" &&
+        window.sessionStorage?.getItem("questions")) ||
+        "[]"
+    );
+
+    // Add new question to the beginning
+    const updatedQuestions: Question[] = [newQuestion, ...existingQuestions];
+
+    // Save to sessionStorage
+    if (typeof window !== "undefined" && window.sessionStorage) {
+      window.sessionStorage.setItem(
+        "questions",
+        JSON.stringify(updatedQuestions)
+      );
+    }
+
+    // Update tags in sessionStorage
+    const oldTags: string[] = JSON.parse(
+      (typeof window !== "undefined" &&
+        window.sessionStorage?.getItem("allTags")) ||
+        "[]"
+    );
+    const updatedTags: string[] = [...new Set([...oldTags, ...tags])];
+    if (typeof window !== "undefined" && window.sessionStorage) {
+      window.sessionStorage.setItem("allTags", JSON.stringify(updatedTags));
+    }
+
+    alert("Question submitted successfully!");
+
+    // Reset form
+    setTitle("");
+    setDescription("");
+    setTags([]);
+    setTagInput("");
+
+    // Redirect to home page
+    if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#dbaf57] text-black dark:bg-zinc-900 dark:text-white">
-      {/* ── header ───────────────────────────────────────── */}
-      <header className="border-b bg-[#fffaf0]/95 backdrop-blur dark:bg-zinc-900/60">
-        <div className="container mx-auto flex items-center justify-between px-4 py-4">
-          <Link href="/" className="text-2xl font-bold">
-            StackIt
-          </Link>
-
-          <div className="flex items-center gap-4">
-            <Link href="/">
-              <Button variant="ghost">Home</Button>
-            </Link>
-            <Button variant="ghost" size="icon">
-              <Bell className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon">
-              <User className="h-5 w-5" />
-            </Button>
-          </div>
-        </div>
-      </header>
-
       {/* ── main content ─────────────────────────────────── */}
       <div className="container mx-auto px-4 py-8">
         <Card className="mx-auto max-w-4xl bg-white dark:bg-zinc-800">
@@ -75,7 +130,9 @@ export default function AskQuestionPage() {
                 id="title"
                 placeholder="Enter a descriptive title for your question"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setTitle(e.target.value)
+                }
                 className="text-base"
               />
             </div>
@@ -100,7 +157,9 @@ export default function AskQuestionPage() {
                   id="tags"
                   placeholder="Add tags (press Enter or comma to add)"
                   value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setTagInput(e.target.value)
+                  }
                   onKeyDown={handleTagKeyPress}
                   onBlur={() => addTag(tagInput)}
                 />
@@ -126,7 +185,7 @@ export default function AskQuestionPage() {
 
             {/* submit */}
             <div className="flex justify-end pt-4">
-              <Button size="lg" className="px-8">
+              <Button size="lg" className="px-8" onClick={handleSubmit}>
                 Submit Question
               </Button>
             </div>
