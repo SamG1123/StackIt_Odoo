@@ -21,16 +21,21 @@ export default function Navbar() {
   const router = useRouter();
 
   useEffect(() => {
+    // Watch login state every 300ms
+    const interval = setInterval(() => {
+      const loginStatus = localStorage.getItem("stackit_loggedIn") === "1";
+      setIsLoggedIn(loginStatus);
+    }, 300);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
     setNotifications([
       { id: 1, message: "Someone replied to your question", read: false },
       { id: 2, message: "Someone commented on your answer", read: false },
       { id: 3, message: "You were mentioned in a post", read: true },
     ]);
-
-    if (typeof window !== "undefined") {
-      const loginStatus = localStorage.getItem("stackit_loggedIn") === "1";
-      setIsLoggedIn(loginStatus);
-    }
   }, []);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
@@ -43,7 +48,8 @@ export default function Navbar() {
   const handleLogout = () => {
     localStorage.removeItem("stackit_loggedIn");
     setIsAvatarOpen(false);
-    router.push("/"); // Refresh page to update navbar state
+    setIsLoggedIn(false); // instant state update
+    router.push("/");     // go to home
   };
 
   return (
@@ -55,7 +61,7 @@ export default function Navbar() {
           </Link>
 
           <div className="flex items-center gap-4 relative z-50">
-            {/* Search icon (optional, mobile only) */}
+            {/* Search (mobile) */}
             <Button variant="ghost" size="icon" className="sm:hidden">
               <Search className="h-5 w-5" />
             </Button>
@@ -86,7 +92,7 @@ export default function Navbar() {
               />
             </div>
 
-            {/* Avatar or Login */}
+            {/* Avatar / Login */}
             {isLoggedIn ? (
               <div className="relative z-[9999]">
                 <Button
@@ -137,7 +143,6 @@ export default function Navbar() {
               </Button>
             )}
 
-            {/* Dark Mode Toggle */}
             <ModeToggle />
           </div>
         </div>

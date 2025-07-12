@@ -62,7 +62,7 @@ export default function LoginPage() {
       // simple session flag
       if (typeof window !== "undefined")
         localStorage.setItem("stackit_loggedIn", "1");
-        window.dispatchEvent(new Event("stackit-auth-change"));
+        router.push("/")
 
       toast({ title: "Logged in!" });
       router.push(nextUrl);
