@@ -1,15 +1,26 @@
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Bell, User, ChevronLeft, ChevronRight } from "lucide-react"
-import Link from "next/link"
+"use client";
+
+import Link from "next/link";
+import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import Navbar from "./components/Navbar";
 
 const questions = [
   {
     id: 1,
-    title: "How to join 2 columns in a data set to make a separate column in SQL",
+    title:
+      "How to join 2 columns in a data set to make a separate column in SQL",
     description:
       "I do not know the code for it as I am a beginner. As an example what I need to do is like there is a column 1 containing First name, and column 2 consists of last name I want a column to combine...",
     tags: ["SQL", "Tags"],
@@ -19,8 +30,8 @@ const questions = [
   },
   {
     id: 2,
-    title: "Question.....",
-    description: "Descriptions....",
+    title: "Question…..",
+    description: "Descriptions….",
     tags: ["SQL", "Tags"],
     user: "User Name",
     answers: 3,
@@ -28,42 +39,20 @@ const questions = [
   },
   {
     id: 3,
-    title: "Question.....",
-    description: "Descriptions....",
+    title: "Question…..",
+    description: "Descriptions….",
     tags: ["SQL", "Tags"],
     user: "User Name",
     answers: 2,
     timeAgo: "6 hours ago",
   },
-]
+];
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="text-2xl font-bold">
-              StackIt
-            </Link>
-
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon">
-                <Bell className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon">
-                <User className="h-5 w-5" />
-              </Button>
-              <Button>Login</Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="container mx-auto px-4 py-6">
-        {/* Action Bar */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+    <div className="min-h-screen flex flex-col bg-[#dbaf57] text-black dark:bg-zinc-900 dark:text-white">
+      <div className="container mx-auto flex-1 px-4 py-6 ">
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row">
           <Link href="/ask">
             <Button className="w-full sm:w-auto">Ask New Question</Button>
           </Link>
@@ -93,38 +82,50 @@ export default function HomePage() {
           </div>
 
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Search..." className="pl-10" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500 dark:text-gray-400" />
+            <Input placeholder="Search…" className="pl-10" />
           </div>
         </div>
 
-        {/* Questions List */}
-        <div className="space-y-4 mb-8">
-          {questions.map((question) => (
-            <Card key={question.id} className="hover:shadow-md transition-shadow">
+        <div className="mb-8 space-y-4">
+          {questions.map((q) => (
+            <Card
+              key={q.id}
+              className="bg-white dark:bg-zinc-800 hover:shadow-md transition-shadow"
+            >
               <CardContent className="p-6">
-                <div className="flex justify-between items-start gap-4">
+                <div className="flex items-start gap-4 justify-between">
                   <div className="flex-1">
-                    <Link href={`/questions/${question.id}`}>
-                      <h3 className="text-lg font-semibold mb-2 hover:text-primary cursor-pointer">{question.title}</h3>
+                    <Link href={`/questions/${q.id}`}>
+                      <h3 className="mb-2 text-lg font-semibold hover:text-blue-600 dark:hover:text-blue-400">
+                        {q.title}
+                      </h3>
                     </Link>
-                    <p className="text-muted-foreground mb-3 line-clamp-2">{question.description}</p>
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {question.tags.map((tag) => (
+
+                    <p className="mb-3 line-clamp-2 text-gray-700 dark:text-gray-300">
+                      {q.description}
+                    </p>
+
+                    <div className="mb-3 flex flex-wrap gap-2">
+                      {q.tags.map((tag) => (
                         <Badge key={tag} variant="secondary">
                           {tag}
                         </Badge>
                       ))}
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span>{question.user}</span>
-                      <span>{question.timeAgo}</span>
+
+                    <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                      <span>{q.user}</span>
+                      <span>{q.timeAgo}</span>
                     </div>
                   </div>
+
                   <div className="text-center">
-                    <div className="bg-primary/10 rounded-lg px-3 py-2">
-                      <div className="text-lg font-semibold">{question.answers}</div>
-                      <div className="text-xs text-muted-foreground">answers</div>
+                    <div className="rounded-lg bg-blue-100 dark:bg-blue-900 px-3 py-2">
+                      <div className="text-lg font-semibold">{q.answers}</div>
+                      <div className="text-xs text-gray-600 dark:text-gray-300">
+                        answers
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -133,14 +134,18 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* Pagination */}
-        <div className="flex justify-center items-center gap-2">
+        <div className="flex items-center justify-center gap-2">
           <Button variant="ghost" size="icon">
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          {[1, 2, 3, 4, 5, 6, 7].map((page) => (
-            <Button key={page} variant={page === 1 ? "default" : "ghost"} size="icon" className="w-8 h-8">
-              {page}
+          {[1, 2, 3, 4, 5, 6, 7].map((p) => (
+            <Button
+              key={p}
+              size="icon"
+              variant={p === 1 ? "default" : "ghost"}
+              className="h-8 w-8"
+            >
+              {p}
             </Button>
           ))}
           <Button variant="ghost" size="icon">
@@ -149,5 +154,5 @@ export default function HomePage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
