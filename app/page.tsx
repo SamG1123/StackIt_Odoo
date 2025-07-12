@@ -100,12 +100,15 @@ export default function HomePage() {
 
   /* UI --------------------------------------------------------------- */
   return (
-    <div className="min-h-screen flex flex-col  dark:bg-slate-900">
+    <div className="min-h-screen flex flex-col dark:bg-slate-900">
       <div className="container mx-auto flex-1 px-6 py-8">
         {/* action bar */}
         <div className="mb-8 flex flex-col gap-6 sm:flex-row">
           <Link href={askHref}>
-            <Button className="w-full sm:w-auto bg-teal-600 hover:bg-teal-700 text-white rounded-full px-8 py-3 dark:bg-cyan-600 dark:hover:bg-cyan-700">
+            <Button
+              className="px-8 bg-purple-600 hover:bg-purple-700 text-white shadow-lg hover:shadow-purple-500/30 transition-all
+                    dark:bg-purple-700 dark:hover:bg-purple-800"
+            >
               Ask New Question
             </Button>
           </Link>
@@ -170,13 +173,13 @@ export default function HomePage() {
           {visible.map((q) => (
             <Card
               key={q._id}
-              className="rounded-3xl bg-white/80 backdrop-blur-sm border border-teal-200 hover:shadow-lg transition dark:bg-slate-800 dark:border-slate-700"
+              className="rounded-3xl bg-white/80 backdrop-blur-sm border border-purple-200 hover:shadow-lg transition dark:bg-slate-800 dark:border-slate-700"
             >
               <CardContent className="p-8">
                 <div className="flex items-start gap-6 justify-between">
                   <div className="flex-1">
                     <Link href={`/questions/${q._id}`}>
-                      <h3 className="mb-2 text-lg font-semibold hover:text-teal-700 dark:hover:text-cyan-400">
+                      <h3 className="mb-2 text-lg font-semibold hover:text-purple-700 dark:hover:text-cyan-400">
                         {q.title}
                       </h3>
                     </Link>
@@ -189,7 +192,7 @@ export default function HomePage() {
                       {q.tags.map((tag) => (
                         <Badge
                           key={tag}
-                          className="rounded-full px-4 py-1 bg-teal-50 border border-teal-200 text-teal-800 dark:bg-slate-700 dark:border-slate-600 dark:text-gray-200"
+                          className="rounded-full px-4 py-1 bg-purple-50 border border-purple-200 text-purple-800 dark:bg-slate-700 dark:border-slate-600 dark:text-gray-200"
                         >
                           {tag}
                         </Badge>
@@ -209,9 +212,14 @@ export default function HomePage() {
                   </div>
 
                   <div className="text-center">
-                    <div className="rounded-3xl bg-[#8F87F1] text-white px-6 py-4 dark:from-cyan-600 dark:to-cyan-700">
+                    <div
+                      className="rounded-2xl bg-purple-700 text-white px-6 py-4 
+              dark:bg-gradient-to-r dark:from-purple-600 dark:to-purple-700
+              transition-colors duration-300 "
+                    >
+                      {" "}
                       <div className="text-xl font-bold">{q.answers}</div>
-                      <div className="text-sm opacity-90">answers</div>
+                      <div className="text-m opacity-90">Answers</div>
                     </div>
                   </div>
                 </div>

@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RichTextEditor } from "@/components/rich-text-editor";
 import { useToast } from "@/components/ui/use-toast";
-import { isLoggedIn } from "@/lib/auth"; // ← NEW
+import { isLoggedIn } from "@/lib/auth";
 
 export default function AskQuestionPage() {
   const router = useRouter();
@@ -86,40 +86,56 @@ export default function AskQuestionPage() {
   }
 
   return (
-    <div className="min-h-screen  dark:bg-zinc-900 dark:text-white py-12">
+    <div className="min-h-screen bg-[#e6e6fa] dark:bg-slate-900 py-12">
       <div className="container mx-auto px-4">
-        <Card className="mx-auto max-w-4xl bg-white/90 border-2 border-purple-200 shadow-lg rounded-3xl dark:bg-zinc-800 dark:border-zinc-700">
+        <Card className="mx-auto max-w-4xl bg-white border-2 border-purple-300 rounded-xl dark:bg-slate-800 dark:border-slate-700">
           <CardHeader>
-            <CardTitle className="text-2xl font-semibold dark:text-white">
+            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent dark:from-purple-400 dark:to-purple-600 dark:text-white">
               Ask a Question
             </CardTitle>
           </CardHeader>
 
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-6 text-slate-800 dark:text-slate-200">
             {/* Title */}
             <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
+              <Label
+                htmlFor="title"
+                className="text-purple-700 dark:text-white font-medium"
+              >
+                Title
+              </Label>
               <Input
                 id="title"
                 placeholder="Enter a descriptive title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                className="focus:border-purple-500 focus:ring-1 focus:ring-purple-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
               />
             </div>
 
             {/* Description */}
             <div className="space-y-2">
-              <Label>Description</Label>
+              <Label className="text-purple-700 dark:text-white font-medium">
+                Description
+              </Label>
               <RichTextEditor
                 value={description}
                 onChange={setDescription}
                 placeholder="Provide detailed information..."
+                // className="border-purple-200 dark:border-slate-600
+                //   [&_.ql-editor]:dark:bg-slate-700 [&_.ql-editor]:dark:text-slate-200
+                //   [&_.ql-editor::placeholder]:dark:text-slate-400"
               />
             </div>
 
             {/* Tags */}
             <div className="space-y-2">
-              <Label htmlFor="tags">Tags</Label>
+              <Label
+                htmlFor="tags"
+                className="text-purple-700 dark:text-white font-medium"
+              >
+                Tags
+              </Label>
               <Input
                 id="tags"
                 placeholder="Add tags (press Enter or comma)"
@@ -127,19 +143,23 @@ export default function AskQuestionPage() {
                 onChange={(e) => setTagInput(e.target.value)}
                 onKeyDown={handleTagKeyPress}
                 onBlur={() => addTag(tagInput)}
+                className="focus:border-purple-500 focus:ring-1 focus:ring-purple-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
               />
               {tags.length > 0 && (
                 <div className="flex flex-wrap gap-2 pt-2">
                   {tags.map((tag) => (
-                    <Badge key={tag}>
+                    <Badge
+                      key={tag}
+                      className="bg-purple-100 text-purple-800 hover:bg-purple-200 dark:bg-purple-900 dark:text-purple-100"
+                    >
                       {tag}
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="ml-1 h-auto p-0"
+                        className="ml-1 h-auto p-0 hover:bg-purple-300/30 dark:hover:bg-purple-800"
                         onClick={() => setTags(tags.filter((t) => t !== tag))}
                       >
-                        <X className="h-3 w-3" />
+                        <X className="h-3 w-3 text-purple-700 dark:text-purple-300" />
                       </Button>
                     </Badge>
                   ))}
@@ -153,7 +173,8 @@ export default function AskQuestionPage() {
                 size="lg"
                 onClick={handleSubmit}
                 disabled={loading}
-                className="px-8"
+                className="px-8 bg-purple-600 hover:bg-purple-700 text-white shadow-lg hover:shadow-purple-500/30 transition-all
+                  dark:bg-purple-700 dark:hover:bg-purple-800"
               >
                 {loading ? "Submitting…" : "Submit Question"}
               </Button>
