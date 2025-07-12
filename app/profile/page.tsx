@@ -1,10 +1,9 @@
 "use client";
-
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface Question {
   id: number;
@@ -21,6 +20,9 @@ interface LoggedInUser {
   id: string;
   username: string;
   email: string;
+  bio?: string;
+  location?: string;
+  profileImage?: string;
 }
 
 // Custom SVG Icons
@@ -134,24 +136,101 @@ const ClockIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const EditIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+    />
+  </svg>
+);
+
+const PlusIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+    />
+  </svg>
+);
+
 export default function ProfilePage() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [activeTab, setActiveTab] = useState<"profile" | "activity">("profile");
   const [user, setUser] = useState<LoggedInUser | null>(null);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const data = sessionStorage.getItem("questions");
-      if (data) {
-        const parsed: Question[] = JSON.parse(data);
-        setQuestions(parsed);
-      }
-      const userData = localStorage.getItem("stackit_user");
-      if (userData) {
-        setUser(JSON.parse(userData));
-      }
-    }
+    // Initialize with mock data for demonstration
+    const mockQuestions: Question[] = [
+      {
+        id: 1,
+        title: "How to implement React hooks effectively?",
+        description:
+          "I'm struggling with understanding when to use useEffect vs useState. Can someone explain the best practices?",
+        tags: ["React", "JavaScript", "Hooks"],
+        user: "Current User",
+        answers: 3,
+        timeAgo: "2 hours ago",
+        answeredByUser: false,
+      },
+      {
+        id: 2,
+        title: "Best practices for CSS Grid layout?",
+        description:
+          "Looking for advice on when to use CSS Grid vs Flexbox for different layout scenarios.",
+        tags: ["CSS", "Grid", "Layout"],
+        user: "Current User",
+        answers: 5,
+        timeAgo: "1 day ago",
+        answeredByUser: false,
+      },
+      {
+        id: 3,
+        title: "Database optimization techniques",
+        description:
+          "What are the most effective ways to optimize database queries for better performance?",
+        tags: ["Database", "Performance", "SQL"],
+        user: "Other User",
+        answers: 2,
+        timeAgo: "3 hours ago",
+        answeredByUser: true,
+      },
+    ];
+
+    const mockUser: LoggedInUser = {
+      id: "1",
+      username: "johndoe",
+      email: "john@example.com",
+      bio: "Full-stack developer passionate about creating amazing user experiences and sharing knowledge with the community.",
+      location: "San Francisco, CA",
+      profileImage: "",
+    };
+
+    setQuestions(mockQuestions);
+    setUser(mockUser);
   }, []);
+
+  const handleEditProfile = () => {
+    alert("Edit Profile functionality would navigate to edit page");
+  };
+
+  const handleAskQuestion = () => {
+    alert("Ask Question functionality would navigate to question form");
+  };
 
   const askedQuestions = questions.filter((q) => q.user === "Current User");
   const answeredQuestions = questions.filter((q) => q.answeredByUser);
@@ -163,16 +242,26 @@ export default function ProfilePage() {
         <div className="bg-white/80 dark:bg-slate-800/90 backdrop-blur-sm rounded-3xl shadow-xl p-8 mb-8 border border-purple-200 dark:border-slate-700/50">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
             <div className="relative">
-              {/* Larger Profile Picture with Gradient Ring */}
+              {/* Enhanced Profile Picture with Image Support */}
               <div className="relative">
                 <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-purple-500 to-purple-700 opacity-75 animate-pulse"></div>
-                <div className="relative h-32 w-32 rounded-full bg-gradient-to-r from-purple-600 to-purple-700 text-white border-4 border-white dark:border-slate-700 shadow-2xl flex items-center justify-center hover:from-purple-700 hover:to-purple-800 transition-all">
-                  <span className="text-4xl font-bold">CU</span>
+                <div className="relative h-32 w-32 rounded-full bg-gradient-to-r from-purple-600 to-purple-700 text-white border-4 border-white dark:border-slate-700 shadow-2xl flex items-center justify-center hover:from-purple-700 hover:to-purple-800 transition-all overflow-hidden">
+                  {user?.profileImage ? (
+                    <img
+                      src={user.profileImage}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-4xl font-bold">
+                      {user?.username?.charAt(0).toUpperCase() || "U"}
+                    </span>
+                  )}
                 </div>
               </div>
-              {/* Status Indicator */}
+              {/* Enhanced Status Indicator */}
               <div className="absolute bottom-2 right-2 h-6 w-6 bg-green-500 rounded-full border-3 border-white dark:border-slate-700 shadow-lg flex items-center justify-center">
-                <div className="h-2 w-2 bg-white rounded-full"></div>
+                <div className="h-2 w-2 bg-white rounded-full animate-pulse"></div>
               </div>
             </div>
 
@@ -180,36 +269,45 @@ export default function ProfilePage() {
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                   <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                    {user?.username ?? "Current User"}
+                    {user?.username || "Current User"}
                   </h1>
                   <p className="text-gray-600 dark:text-gray-300 text-lg mb-3">
-                    {user?.email ?? "Enthusiastic learner and knowledge sharer"}
+                    {user?.bio || "Enthusiastic learner and knowledge sharer"}
                   </p>
-                  <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                  <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                     <div className="flex items-center gap-1">
                       <LocationIcon className="h-4 w-4" />
-                      <span>San Francisco, CA</span>
+                      <span>{user?.location || "San Francisco, CA"}</span>
                     </div>
-                    <span>•</span>
                     <div className="flex items-center gap-1">
                       <CalendarIcon className="h-4 w-4" />
                       <span>Joined January 2024</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span>💼</span>
+                      <span>Software Developer</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex gap-3">
+                  <Link href="/profile/edit">
+                    <Button
+                      onClick={handleEditProfile}
+                      variant="outline"
+                      size="lg"
+                      className="bg-white/80 border-purple-200 text-purple-700 hover:bg-purple-50 hover:border-purple-300 dark:bg-slate-800/90 dark:border-slate-700 dark:text-purple-400 dark:hover:bg-purple-900/30 hover:scale-105 transition-all rounded-full"
+                    >
+                      <EditIcon className="h-4 w-4 mr-2" />
+                      Edit Profile
+                    </Button>
+                  </Link>
                   <Button
-                    variant="outline"
-                    size="lg"
-                    className="bg-white/80 border-purple-200 text-purple-700 hover:bg-purple-50 hover:border-purple-300 dark:bg-slate-800/90 dark:border-slate-700 dark:text-purple-400 dark:hover:bg-purple-900/30 hover:scale-105 transition-all rounded-full"
-                  >
-                    Edit Profile
-                  </Button>
-                  <Button
+                    onClick={handleAskQuestion}
                     size="lg"
                     className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg hover:shadow-purple-500/30 transition-all hover:scale-105 rounded-full dark:bg-purple-700 dark:hover:bg-purple-800"
                   >
+                    <PlusIcon className="h-4 w-4 mr-2" />
                     Ask Question
                   </Button>
                 </div>
@@ -219,11 +317,13 @@ export default function ProfilePage() {
 
           {/* Enhanced Stats Section */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8 pt-8 border-t border-purple-200 dark:border-slate-700">
-            <div className="text-center group">
-              <div className="mb-2 mx-auto w-fit">
-                <QuestionIcon className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+            <div className="text-center group hover:scale-105 transition-transform">
+              <div className="mb-3 mx-auto w-fit">
+                <div className="h-12 w-12 bg-purple-100 dark:bg-slate-700 rounded-full flex items-center justify-center group-hover:bg-purple-200 dark:group-hover:bg-slate-600 transition-colors">
+                  <QuestionIcon className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                </div>
               </div>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">
+              <p className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
                 {askedQuestions.length}
               </p>
               <p className="text-gray-500 dark:text-gray-400 font-medium">
@@ -231,11 +331,13 @@ export default function ProfilePage() {
               </p>
             </div>
 
-            <div className="text-center group">
-              <div className="mb-2 mx-auto w-fit">
-                <CheckIcon className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+            <div className="text-center group hover:scale-105 transition-transform">
+              <div className="mb-3 mx-auto w-fit">
+                <div className="h-12 w-12 bg-purple-100 dark:bg-slate-700 rounded-full flex items-center justify-center group-hover:bg-purple-200 dark:group-hover:bg-slate-600 transition-colors">
+                  <CheckIcon className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                </div>
               </div>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">
+              <p className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
                 {answeredQuestions.length}
               </p>
               <p className="text-gray-500 dark:text-gray-400 font-medium">
@@ -243,11 +345,13 @@ export default function ProfilePage() {
               </p>
             </div>
 
-            <div className="text-center group">
-              <div className="mb-2 mx-auto w-fit">
-                <HeartIcon className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+            <div className="text-center group hover:scale-105 transition-transform">
+              <div className="mb-3 mx-auto w-fit">
+                <div className="h-12 w-12 bg-purple-100 dark:bg-slate-700 rounded-full flex items-center justify-center group-hover:bg-purple-200 dark:group-hover:bg-slate-600 transition-colors">
+                  <HeartIcon className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                </div>
               </div>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">
+              <p className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
                 {Math.floor(Math.random() * 50) + 10}
               </p>
               <p className="text-gray-500 dark:text-gray-400 font-medium">
@@ -255,11 +359,13 @@ export default function ProfilePage() {
               </p>
             </div>
 
-            <div className="text-center group">
-              <div className="mb-2 mx-auto w-fit">
-                <BoltIcon className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+            <div className="text-center group hover:scale-105 transition-transform">
+              <div className="mb-3 mx-auto w-fit">
+                <div className="h-12 w-12 bg-purple-100 dark:bg-slate-700 rounded-full flex items-center justify-center group-hover:bg-purple-200 dark:group-hover:bg-slate-600 transition-colors">
+                  <BoltIcon className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                </div>
               </div>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">
+              <p className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
                 {Math.floor(Math.random() * 500) + 100}
               </p>
               <p className="text-gray-500 dark:text-gray-400 font-medium">
