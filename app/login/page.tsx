@@ -78,10 +78,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center  dark:bg-slate-900 dark:text-white px-4">
-      <Card className="w-full max-w-md bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700">
+    <div className="flex min-h-screen items-center justify-center dark:bg-slate-900 dark:text-white px-4">
+      <Card className="w-full max-w-md bg-white/80 backdrop-blur-sm border border-purple-200 shadow-xl dark:bg-slate-800 dark:border-slate-700">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-2xl">
+          <CardTitle className="flex items-center gap-2 text-2xl text-purple-700 dark:text-purple-300">
             <User className="h-6 w-6" /> Log in to StackIt
           </CardTitle>
         </CardHeader>
@@ -99,6 +99,7 @@ export default function LoginPage() {
                 required
                 value={form.username}
                 onChange={handleChange("username")}
+                className="rounded-full border-purple-200 focus:border-purple-400 focus:ring-purple-400 dark:border-slate-600 dark:focus:border-purple-500"
               />
             </div>
 
@@ -115,12 +116,12 @@ export default function LoginPage() {
                   required
                   value={form.password}
                   onChange={handleChange("password")}
-                  className="pr-11"
+                  className="pr-11 rounded-full border-purple-200 focus:border-purple-400 focus:ring-purple-400 dark:border-slate-600 dark:focus:border-purple-500"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPw((p) => !p)}
-                  className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 dark:text-gray-400"
+                  className="absolute inset-y-0 right-0 flex items-center px-3 text-purple-500 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300"
                 >
                   {showPw ? (
                     <EyeOff className="h-4 w-4" />
@@ -134,7 +135,7 @@ export default function LoginPage() {
             {/* SUBMIT */}
             <Button
               type="submit"
-              className="w-full bg-teal-600 hover:bg-teal-700 dark:bg-cyan-600 dark:hover:bg-cyan-700"
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white shadow-lg hover:shadow-purple-500/30 transition-all dark:bg-purple-700 dark:hover:bg-purple-800"
               disabled={loading}
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -143,12 +144,18 @@ export default function LoginPage() {
 
             {/* FOOTER LINKS */}
             <div className="flex items-center justify-between text-sm">
-              <Link href="/forgot-password" className="hover:underline">
+              <Link
+                href="/forgot-password"
+                className="text-purple-600 hover:text-purple-700 hover:underline dark:text-purple-400 dark:hover:text-purple-300"
+              >
                 Forgot password?
               </Link>
               <span>
                 New here?{" "}
-                <Link href="/signup" className="font-medium hover:underline">
+                <Link
+                  href="/signup"
+                  className="font-medium text-purple-600 hover:text-purple-700 hover:underline dark:text-purple-400 dark:hover:text-purple-300"
+                >
                   Create account
                 </Link>
               </span>

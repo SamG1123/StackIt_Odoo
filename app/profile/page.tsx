@@ -146,21 +146,21 @@ export default function ProfilePage() {
   const answeredQuestions = questions.filter((q) => q.answeredByUser);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900 text-black dark:text-white">
+    <div className="min-h-screen dark:bg-slate-900 dark:text-white px-4">
       <div className="container mx-auto px-4 py-8 max-w-5xl">
         {/* Enhanced Profile Header */}
-        <div className="bg-white/70 dark:bg-zinc-800/90 backdrop-blur-sm rounded-2xl shadow-xl p-8 mb-8 border border-white/20 dark:border-zinc-700/50">
+        <div className="bg-white/80 dark:bg-slate-800/90 backdrop-blur-sm rounded-3xl shadow-xl p-8 mb-8 border border-purple-200 dark:border-slate-700/50">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
             <div className="relative">
               {/* Larger Profile Picture with Gradient Ring */}
               <div className="relative">
-                <div className="absolute -inset-1 rounded-full bg-purple-600 opacity-75 animate-pulse"></div>
-                <div className="relative h-32 w-32 rounded-full bg-purple-600 text-white border-4 border-white dark:border-zinc-700 shadow-2xl flex items-center justify-center hover:bg-purple-700 transition-colors">
+                <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-purple-500 to-purple-700 opacity-75 animate-pulse"></div>
+                <div className="relative h-32 w-32 rounded-full bg-gradient-to-r from-purple-600 to-purple-700 text-white border-4 border-white dark:border-slate-700 shadow-2xl flex items-center justify-center hover:from-purple-700 hover:to-purple-800 transition-all">
                   <span className="text-4xl font-bold">CU</span>
                 </div>
               </div>
               {/* Status Indicator */}
-              <div className="absolute bottom-2 right-2 h-6 w-6 bg-green-500 rounded-full border-3 border-white dark:border-zinc-700 shadow-lg flex items-center justify-center">
+              <div className="absolute bottom-2 right-2 h-6 w-6 bg-green-500 rounded-full border-3 border-white dark:border-slate-700 shadow-lg flex items-center justify-center">
                 <div className="h-2 w-2 bg-white rounded-full"></div>
               </div>
             </div>
@@ -191,13 +191,13 @@ export default function ProfilePage() {
                   <Button
                     variant="outline"
                     size="lg"
-                    className="bg-gradient-to-r from-purple-600 to-purple-700 text-white dark:border-blue-500 dark:text-blue-400 hover:bg-purple-50 dark:hover:bg-blue-900/30 hover:scale-105 transition-transform"
+                    className="bg-white/80 border-purple-200 text-purple-700 hover:bg-purple-50 hover:border-purple-300 dark:bg-slate-800/90 dark:border-slate-700 dark:text-purple-400 dark:hover:bg-purple-900/30 hover:scale-105 transition-all rounded-full"
                   >
                     Edit Profile
                   </Button>
                   <Button
                     size="lg"
-                    className="bg-gradient-to-r from-purple-600 to-purple-700 text-white dark:border-blue-500 dark:text-blue-400 hover:bg-purple-50 dark:hover:bg-blue-900/30 hover:scale-105 transition-transform"
+                    className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg hover:shadow-purple-500/30 transition-all hover:scale-105 rounded-full dark:bg-purple-700 dark:hover:bg-purple-800"
                   >
                     Ask Question
                   </Button>
@@ -207,10 +207,10 @@ export default function ProfilePage() {
           </div>
 
           {/* Enhanced Stats Section */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8 pt-8 border-t border-gray-200 dark:border-zinc-700">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8 pt-8 border-t border-purple-200 dark:border-slate-700">
             <div className="text-center group">
               <div className="mb-2 mx-auto w-fit">
-                <QuestionIcon className="h-6 w-6 text-black dark:text-white" />
+                <QuestionIcon className="h-6 w-6 text-purple-600 dark:text-purple-400" />
               </div>
               <p className="text-3xl font-bold text-gray-900 dark:text-white">
                 {askedQuestions.length}
@@ -222,7 +222,7 @@ export default function ProfilePage() {
 
             <div className="text-center group">
               <div className="mb-2 mx-auto w-fit">
-                <CheckIcon className="h-6 w-6 text-black dark:text-white" />
+                <CheckIcon className="h-6 w-6 text-purple-600 dark:text-purple-400" />
               </div>
               <p className="text-3xl font-bold text-gray-900 dark:text-white">
                 {answeredQuestions.length}
@@ -234,7 +234,7 @@ export default function ProfilePage() {
 
             <div className="text-center group">
               <div className="mb-2 mx-auto w-fit">
-                <HeartIcon className="h-6 w-6 text-black dark:text-white" />
+                <HeartIcon className="h-6 w-6 text-purple-600 dark:text-purple-400" />
               </div>
               <p className="text-3xl font-bold text-gray-900 dark:text-white">
                 {Math.floor(Math.random() * 50) + 10}
@@ -246,7 +246,7 @@ export default function ProfilePage() {
 
             <div className="text-center group">
               <div className="mb-2 mx-auto w-fit">
-                <BoltIcon className="h-6 w-6 text-black dark:text-white" />
+                <BoltIcon className="h-6 w-6 text-purple-600 dark:text-purple-400" />
               </div>
               <p className="text-3xl font-bold text-gray-900 dark:text-white">
                 {Math.floor(Math.random() * 500) + 100}
@@ -258,18 +258,18 @@ export default function ProfilePage() {
           </div>
 
           {/* Enhanced Navigation Tabs */}
-          <div className="flex pt-10 border-b-2 border-gray-200 dark:border-zinc-700 mb-8">
+          <div className="flex pt-10 border-b-2 border-purple-200 dark:border-slate-700 mb-8">
             <button
               onClick={() => setActiveTab("profile")}
               className={`px-6 py-3 font-semibold text-lg transition-all duration-200 relative ${
                 activeTab === "profile"
                   ? "text-purple-700 dark:text-purple-400"
-                  : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                  : "text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-300"
               }`}
             >
               Profile
               {activeTab === "profile" && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-500 to-purple-700 rounded-full"></div>
               )}
             </button>
             <button
@@ -277,12 +277,12 @@ export default function ProfilePage() {
               className={`px-6 py-3 font-semibold text-lg transition-all duration-200 relative ${
                 activeTab === "activity"
                   ? "text-purple-700 dark:text-purple-400"
-                  : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                  : "text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-300"
               }`}
             >
               Activity
               {activeTab === "activity" && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-500 to-purple-700 rounded-full"></div>
               )}
             </button>
           </div>
@@ -292,20 +292,20 @@ export default function ProfilePage() {
               {/* Enhanced Asked Questions Section */}
               <section className="mb-12">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
-                  <div className="h-8 w-1 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></div>
+                  <div className="h-8 w-1 bg-gradient-to-b from-purple-500 to-purple-700 rounded-full"></div>
                   Asked Questions
                 </h2>
                 {askedQuestions.length === 0 ? (
-                  <div className="bg-white/70 dark:bg-zinc-800/90 backdrop-blur-sm rounded-2xl p-8 text-center border border-white/20 dark:border-zinc-700/50">
-                    <div className="h-16 w-16 bg-gray-100 dark:bg-zinc-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <QuestionIcon className="h-8 w-8 text-gray-400" />
+                  <div className="bg-white/80 dark:bg-slate-800/90 backdrop-blur-sm rounded-3xl p-8 text-center border border-purple-200 dark:border-slate-700/50">
+                    <div className="h-16 w-16 bg-purple-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <QuestionIcon className="h-8 w-8 text-purple-600 dark:text-purple-400" />
                     </div>
                     <p className="text-gray-500 dark:text-gray-400 text-lg mb-4">
                       You haven't asked any questions yet
                     </p>
                     <Button
                       size="lg"
-                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl"
+                      className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg hover:shadow-purple-500/30 transition-all rounded-full"
                     >
                       Ask Your First Question
                     </Button>
@@ -315,7 +315,7 @@ export default function ProfilePage() {
                     {askedQuestions.map((q) => (
                       <Card
                         key={q.id}
-                        className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white/70 dark:bg-zinc-800/90 backdrop-blur-sm border-white/20 dark:border-zinc-700/50"
+                        className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white/80 dark:bg-slate-800/90 backdrop-blur-sm border-purple-200 dark:border-slate-700/50 rounded-3xl"
                       >
                         <CardContent className="p-6">
                           <Link href={`/questions/${q.id}`}>
@@ -330,8 +330,7 @@ export default function ProfilePage() {
                             {q.tags.map((tag) => (
                               <Badge
                                 key={tag}
-                                variant="outline"
-                                className="text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-zinc-700 hover:bg-gray-200 dark:hover:bg-zinc-600 transition-colors px-3 py-1"
+                                className="rounded-full px-4 py-1 bg-purple-50 border border-purple-200 text-purple-800 dark:bg-slate-700 dark:border-slate-600 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-slate-600 transition-colors"
                               >
                                 {tag}
                               </Badge>
@@ -354,13 +353,13 @@ export default function ProfilePage() {
               {/* Enhanced Answered Questions Section */}
               <section>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
-                  <div className="h-8 w-1 bg-gradient-to-b from-green-500 to-teal-500 rounded-full"></div>
+                  <div className="h-8 w-1 bg-gradient-to-b from-purple-500 to-purple-700 rounded-full"></div>
                   Answered Questions
                 </h2>
                 {answeredQuestions.length === 0 ? (
-                  <div className="bg-white/70 dark:bg-zinc-800/90 backdrop-blur-sm rounded-2xl p-8 text-center border border-white/20 dark:border-zinc-700/50">
-                    <div className="h-16 w-16 bg-gray-100 dark:bg-zinc-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <CheckIcon className="h-8 w-8 text-gray-400" />
+                  <div className="bg-white/80 dark:bg-slate-800/90 backdrop-blur-sm rounded-3xl p-8 text-center border border-purple-200 dark:border-slate-700/50">
+                    <div className="h-16 w-16 bg-purple-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <CheckIcon className="h-8 w-8 text-purple-600 dark:text-purple-400" />
                     </div>
                     <p className="text-gray-500 dark:text-gray-400 text-lg">
                       You haven't answered any questions yet
@@ -371,11 +370,11 @@ export default function ProfilePage() {
                     {answeredQuestions.map((q) => (
                       <Card
                         key={q.id}
-                        className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white/70 dark:bg-zinc-800/90 backdrop-blur-sm border-white/20 dark:border-zinc-700/50"
+                        className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white/80 dark:bg-slate-800/90 backdrop-blur-sm border-purple-200 dark:border-slate-700/50 rounded-3xl"
                       >
                         <CardContent className="p-6">
                           <Link href={`/questions/${q.id}`}>
-                            <h3 className="text-xl font-semibold text-gray-900 hover:text-green-600 dark:text-white dark:hover:text-green-400 mb-3 transition-colors">
+                            <h3 className="text-xl font-semibold text-gray-900 hover:text-purple-600 dark:text-white dark:hover:text-purple-400 mb-3 transition-colors">
                               {q.title}
                             </h3>
                           </Link>
@@ -396,9 +395,9 @@ export default function ProfilePage() {
             </>
           ) : (
             /* Enhanced Activity Tab Content */
-            <div className="bg-white/70 dark:bg-zinc-800/90 backdrop-blur-sm rounded-2xl p-8 border border-white/20 dark:border-zinc-700/50">
+            <div className="bg-white/80 dark:bg-slate-800/90 backdrop-blur-sm rounded-3xl p-8 border border-purple-200 dark:border-slate-700/50">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
-                <div className="h-8 w-1 bg-gradient-to-b from-blue-500 to-indigo-500 rounded-full"></div>
+                <div className="h-8 w-1 bg-gradient-to-b from-purple-500 to-purple-700 rounded-full"></div>
                 Recent Activity
               </h2>
               <div className="space-y-6">
@@ -411,14 +410,14 @@ export default function ProfilePage() {
                   .map((item, index) => (
                     <div
                       key={index}
-                      className="border-b border-gray-200 dark:border-zinc-700 pb-6 last:border-0 last:pb-0"
+                      className="border-b border-purple-200 dark:border-slate-700 pb-6 last:border-0 last:pb-0"
                     >
                       <div className="flex items-start gap-4">
                         <div
                           className={`flex-shrink-0 h-12 w-12 rounded-full flex items-center justify-center shadow-lg ${
                             item.answeredByUser
-                              ? "bg-gradient-to-r from-green-500 to-teal-500"
-                              : "bg-gradient-to-r from-purple-500 to-pink-500"
+                              ? "bg-gradient-to-r from-purple-500 to-purple-700"
+                              : "bg-gradient-to-r from-purple-600 to-purple-800"
                           }`}
                         >
                           {item.answeredByUser ? (
@@ -434,7 +433,7 @@ export default function ProfilePage() {
                               : "Asked a question"}
                           </p>
                           <Link href={`/questions/${item.id}`}>
-                            <p className="text-purple-600 dark:text-purple-400 hover:underline mb-2 font-medium">
+                            <p className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 hover:underline mb-2 font-medium transition-colors">
                               {item.title}
                             </p>
                           </Link>
@@ -448,8 +447,8 @@ export default function ProfilePage() {
                 {askedQuestions.length === 0 &&
                   answeredQuestions.length === 0 && (
                     <div className="text-center py-8">
-                      <div className="h-16 w-16 bg-gray-100 dark:bg-zinc-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <ClockIcon className="h-8 w-8 text-gray-400" />
+                      <div className="h-16 w-16 bg-purple-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <ClockIcon className="h-8 w-8 text-purple-600 dark:text-purple-400" />
                       </div>
                       <p className="text-gray-500 dark:text-gray-400 text-lg">
                         No activity yet
