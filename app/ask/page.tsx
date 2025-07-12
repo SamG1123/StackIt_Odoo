@@ -1,8 +1,7 @@
 "use client";
 
-import type React from "react";
-import { useState } from "react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -11,23 +10,31 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RichTextEditor } from "@/components/rich-text-editor";
+import { useToast } from "@/components/ui/use-toast";
+import { isLoggedIn } from "@/lib/auth"; // ← NEW
 
 export default function AskQuestionPage() {
-  const [title, setTitle] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [tags, setTags] = useState<string[]>([]);
-  const [tagInput, setTagInput] = useState<string>("");
+  const router = useRouter();
+  const { toast } = useToast();
 
-  const addTag = (tag: string) => {
-    const trimmed = tag.trim();
-    if (trimmed && !tags.includes(trimmed)) {
-      setTags([...tags, trimmed]);
-      setTagInput("");
+  /* ── auth guard ───────────────────────────────────── */
+  useEffect(() => {
+    if (!isLoggedIn()) {
+      router.replace("/login?next=/ask");
     }
-  };
+  }, [router]);
+  /* --------------------------------------------------- */
 
-  const removeTag = (tagToRemove: string) => {
-    setTags(tags.filter((tag) => tag !== tagToRemove));
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const addTag = (t: string) => {
+    const tag = t.trim();
+    if (tag && !tags.includes(tag)) setTags([...tags, tag]);
+    setTagInput("");
   };
 
   const handleTagKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -37,48 +44,51 @@ export default function AskQuestionPage() {
     }
   };
 
-  const handleSubmit = () => {
-    if (!title.trim() || !description.trim()) {
-      alert("Please fill in both title and description");
+  async function handleSubmit() {
+    if (!title || !description || tags.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "Missing fields",
+        description: "Please fill title, description and add at least one tag",
+      });
       return;
     }
 
-    if (tags.length === 0) {
-      alert("Please add at least one tag");
-      return;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/questions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          description,
+          tags,
+          user: "Current User",
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || "Failed to submit");
+      }
+
+      toast({ title: "Question submitted!" });
+      router.push("/");
+    } catch (err: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: err.message ?? "Something went wrong",
+      });
+    } finally {
+      setLoading(false);
     }
-
-    const newQuestion = {
-      id: Date.now(),
-      title: title.trim(),
-      description: description.trim(),
-      tags,
-      user: "Current User",
-      answers: 0,
-      timeAgo: "Just now",
-    };
-
-    const existing = JSON.parse(sessionStorage.getItem("questions") || "[]");
-    const updated = [newQuestion, ...existing];
-    sessionStorage.setItem("questions", JSON.stringify(updated));
-
-    const oldTags = JSON.parse(sessionStorage.getItem("allTags") || "[]");
-    const newTags = [...new Set([...oldTags, ...tags])];
-    sessionStorage.setItem("allTags", JSON.stringify(newTags));
-
-    alert("Question submitted successfully!");
-    setTitle("");
-    setDescription("");
-    setTags([]);
-    setTagInput("");
-
-    window.location.href = "/";
-  };
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-50 to-purple-200 dark:bg-zinc-900 dark:text-white py-12">
       <div className="container mx-auto px-4">
-        <Card className="mx-auto max-w-4xl bg-white/90 border-2 border-purple-200 shadow-lg rounded-3xl backdrop-blur-md dark:bg-zinc-800 dark:border-zinc-700 dark:shadow-md dark:rounded-lg">
+        <Card className="mx-auto max-w-4xl bg-white/90 border-2 border-purple-200 shadow-lg rounded-3xl dark:bg-zinc-800 dark:border-zinc-700">
           <CardHeader>
             <CardTitle className="text-2xl font-semibold dark:text-white">
               Ask a Question
@@ -94,7 +104,6 @@ export default function AskQuestionPage() {
                 placeholder="Enter a descriptive title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="bg-white/70 border-2 border-purple-200 rounded-full py-2 px-4 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white dark:rounded-md"
               />
             </div>
 
@@ -111,37 +120,31 @@ export default function AskQuestionPage() {
             {/* Tags */}
             <div className="space-y-2">
               <Label htmlFor="tags">Tags</Label>
-              <div className="space-y-3">
-                <Input
-                  id="tags"
-                  placeholder="Add tags (press Enter or comma)"
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  onKeyDown={handleTagKeyPress}
-                  onBlur={() => addTag(tagInput)}
-                  className="bg-white/70 border-2 border-purple-200 rounded-full py-2 px-4 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white dark:rounded-md"
-                />
-                {tags.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {tags.map((tag) => (
-                      <Badge
-                        key={tag}
-                        className="bg-gradient-to-r from-purple-100 to-purple-200 text-purple-700 border-2 border-purple-300 rounded-full px-4 py-2 font-medium dark:bg-zinc-700 dark:text-gray-300 dark:border-zinc-600 dark:rounded-md"
+              <Input
+                id="tags"
+                placeholder="Add tags (press Enter or comma)"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={handleTagKeyPress}
+                onBlur={() => addTag(tagInput)}
+              />
+              {tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 pt-2">
+                  {tags.map((tag) => (
+                    <Badge key={tag}>
+                      {tag}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="ml-1 h-auto p-0"
+                        onClick={() => setTags(tags.filter((t) => t !== tag))}
                       >
-                        {tag}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="ml-1 h-auto p-0 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white"
-                          onClick={() => removeTag(tag)}
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-              </div>
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Submit */}
@@ -149,9 +152,10 @@ export default function AskQuestionPage() {
               <Button
                 size="lg"
                 onClick={handleSubmit}
-                className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-full px-6 py-2 shadow-md dark:bg-blue-700 dark:hover:bg-blue-800 dark:rounded-md"
+                disabled={loading}
+                className="px-8"
               >
-                Submit Question
+                {loading ? "Submitting…" : "Submit Question"}
               </Button>
             </div>
           </CardContent>
