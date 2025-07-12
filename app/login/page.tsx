@@ -4,25 +4,71 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { z } from "zod";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff, Loader2, User } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+
+const LOGIN_ENDPOINT = "/api/login";
+
+const LoginSchema = z.object({
+  username: z.string().min(1, "Username is required"),
+  password: z.string().min(1, "Password is required"),
+});
 
 export default function LoginPage() {
   const router = useRouter();
+  const { toast } = useToast();
+
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPw, setShowPw] = useState(false);
   const [form, setForm] = useState({ username: "", password: "" });
+
+  const handleChange =
+    (field: "username" | "password") =>
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      setForm({ ...form, [field]: e.target.value });
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    /* client check */
+    const parsed = LoginSchema.safeParse(form);
+    if (!parsed.success) {
+      toast({
+        variant: "destructive",
+        title: "Validation error",
+        description: parsed.error.issues[0].message,
+      });
+      return;
+    }
+
     setLoading(true);
     try {
-      await new Promise((r) => setTimeout(r, 1000)); // 👈 replace with real auth
+      const res = await fetch(LOGIN_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) throw new Error(data.message || "Invalid credentials");
+
+      /* store token (adjust if using cookies/next‑auth) */
+      if (data.token) localStorage.setItem("stackit_token", data.token);
+
+      toast({ title: "Logged in!" });
       router.push("/");
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      toast({
+        variant: "destructive",
+        title: "Login failed",
+        description: err.message ?? "Something went wrong",
+      });
     } finally {
       setLoading(false);
     }
@@ -39,7 +85,7 @@ export default function LoginPage() {
 
         <CardContent>
           <form className="space-y-6" onSubmit={onSubmit}>
-            {/* username */}
+            {/* USERNAME */}
             <div className="space-y-2">
               <label className="block text-sm font-medium" htmlFor="username">
                 Username
@@ -49,11 +95,11 @@ export default function LoginPage() {
                 placeholder="Enter your username"
                 required
                 value={form.username}
-                onChange={(e) => setForm({ ...form, username: e.target.value })}
+                onChange={handleChange("username")}
               />
             </div>
 
-            {/* password */}
+            {/* PASSWORD */}
             <div className="space-y-2">
               <label className="block text-sm font-medium" htmlFor="password">
                 Password
@@ -61,21 +107,19 @@ export default function LoginPage() {
               <div className="relative">
                 <Input
                   id="password"
-                  type={showPassword ? "text" : "password"}
+                  type={showPw ? "text" : "password"}
                   placeholder="Enter your password"
                   required
                   value={form.password}
-                  onChange={(e) =>
-                    setForm({ ...form, password: e.target.value })
-                  }
+                  onChange={handleChange("password")}
                   className="pr-11"
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword((p) => !p)}
+                  onClick={() => setShowPw((p) => !p)}
                   className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 dark:text-gray-400"
                 >
-                  {showPassword ? (
+                  {showPw ? (
                     <EyeOff className="h-4 w-4" />
                   ) : (
                     <Eye className="h-4 w-4" />
@@ -84,13 +128,13 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* submit */}
+            {/* SUBMIT */}
             <Button type="submit" className="w-full" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Log In
             </Button>
 
-            {/* footer links */}
+            {/* FOOTER LINKS */}
             <div className="flex items-center justify-between text-sm">
               <Link href="/forgot-password" className="hover:underline">
                 Forgot password?

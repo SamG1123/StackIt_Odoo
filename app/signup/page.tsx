@@ -4,25 +4,71 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { z } from "zod";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff, Loader2, Pencil } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+
+/* endpoint of your app router handler */
+const SIGNUP_ENDPOINT = "/api/signup";
+
+/* mirror your route‑level requirements */
+const SignupSchema = z.object({
+  email: z.string().email("Invalid email"),
+  username: z.string().min(1, "Username is required"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+});
 
 export default function SignupPage() {
   const router = useRouter();
+  const { toast } = useToast();
+
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPw, setShowPw] = useState(false);
   const [form, setForm] = useState({ email: "", username: "", password: "" });
+
+  const handleChange =
+    (field: "email" | "username" | "password") =>
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      setForm({ ...form, [field]: e.target.value });
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    /* client‑side validation */
+    const parsed = SignupSchema.safeParse(form);
+    if (!parsed.success) {
+      toast({
+        variant: "destructive",
+        title: "Validation error",
+        description: parsed.error.issues[0].message,
+      });
+      return;
+    }
+
     setLoading(true);
     try {
-      await new Promise((r) => setTimeout(r, 1000)); // ⏳ replace with real signup call
+      const res = await fetch(SIGNUP_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) throw new Error(data.message || "Signup failed");
+
+      toast({ title: "Account created! You can log in now." });
       router.push("/login");
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: err.message ?? "Something went wrong",
+      });
     } finally {
       setLoading(false);
     }
@@ -39,7 +85,7 @@ export default function SignupPage() {
 
         <CardContent>
           <form className="space-y-6" onSubmit={onSubmit}>
-            {/* email */}
+            {/* EMAIL */}
             <div className="space-y-2">
               <label className="block text-sm font-medium" htmlFor="email">
                 Email address
@@ -47,28 +93,28 @@ export default function SignupPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="Enter your email"
+                placeholder="Enter the email address"
                 required
                 value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                onChange={handleChange("email")}
               />
             </div>
 
-            {/* username */}
+            {/* USERNAME */}
             <div className="space-y-2">
               <label className="block text-sm font-medium" htmlFor="username">
                 Username
               </label>
               <Input
                 id="username"
-                placeholder="Choose a username"
+                placeholder="Enter the username"
                 required
                 value={form.username}
-                onChange={(e) => setForm({ ...form, username: e.target.value })}
+                onChange={handleChange("username")}
               />
             </div>
 
-            {/* password with show/hide */}
+            {/* PASSWORD */}
             <div className="space-y-2">
               <label className="block text-sm font-medium" htmlFor="password">
                 Password
@@ -76,21 +122,19 @@ export default function SignupPage() {
               <div className="relative">
                 <Input
                   id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter a strong password"
+                  type={showPw ? "text" : "password"}
+                  placeholder="Enter the password"
                   required
                   value={form.password}
-                  onChange={(e) =>
-                    setForm({ ...form, password: e.target.value })
-                  }
+                  onChange={handleChange("password")}
                   className="pr-11"
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword((p) => !p)}
+                  onClick={() => setShowPw((p) => !p)}
                   className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 dark:text-gray-400"
                 >
-                  {showPassword ? (
+                  {showPw ? (
                     <EyeOff className="h-4 w-4" />
                   ) : (
                     <Eye className="h-4 w-4" />
@@ -99,13 +143,13 @@ export default function SignupPage() {
               </div>
             </div>
 
-            {/* submit */}
+            {/* SUBMIT */}
             <Button type="submit" className="w-full" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Create Account
             </Button>
 
-            {/* footer */}
+            {/* FOOTER */}
             <p className="text-center text-sm">
               Already have an account?{" "}
               <Link href="/login" className="font-medium hover:underline">
