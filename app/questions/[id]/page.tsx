@@ -59,7 +59,7 @@ export default function QuestionDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#dbaf57] text-black dark:bg-zinc-900 dark:text-white">
+    <div className="min-h-screen  text-black dark:bg-slate-900 dark:text-white">
       <div className="container mx-auto px-4 py-6">
         {/* breadcrumb */}
         <div className="mb-6 text-sm text-gray-600 dark:text-gray-400">
@@ -67,17 +67,20 @@ export default function QuestionDetailPage() {
             Questions
           </Link>
           <span className="mx-2">{">"}</span>
-          <span>{question.title.slice(0, 15)}…</span>
+          <span>{question.title.slice(0, 20)}…</span>
         </div>
 
         {/* question */}
-        <Card className="mb-8 bg-white dark:bg-zinc-800">
+        <Card className="mb-8 bg-white dark:bg-slate-800 border border-teal-200 dark:border-slate-700">
           <CardContent className="p-6">
             <h1 className="mb-4 text-2xl font-bold">{question.title}</h1>
 
             <div className="mb-4 flex flex-wrap gap-2">
               {question.tags.map((tag) => (
-                <Badge key={tag} variant="secondary">
+                <Badge
+                  key={tag}
+                  className="rounded-full px-3 py-1 bg-teal-50 border border-teal-200 text-teal-800 dark:bg-slate-700 dark:border-slate-600 dark:text-gray-200"
+                >
                   {tag}
                 </Badge>
               ))}
@@ -94,7 +97,7 @@ export default function QuestionDetailPage() {
           </CardContent>
         </Card>
 
-        {/* Answers section */}
+        {/* Answers */}
         <h2 className="mb-4 text-xl font-semibold">
           Answers ({answers.length})
         </h2>
@@ -102,7 +105,10 @@ export default function QuestionDetailPage() {
         {loggedIn ? (
           <div className="mb-8 space-y-6">
             {answers.map((a) => (
-              <Card key={a.id} className="bg-white dark:bg-zinc-800">
+              <Card
+                key={a.id}
+                className="bg-white dark:bg-slate-800 border border-teal-100 dark:border-slate-700"
+              >
                 <CardContent className="p-6">
                   <div className="flex gap-4">
                     {/* vote column */}
@@ -156,14 +162,14 @@ export default function QuestionDetailPage() {
             ))}
           </div>
         ) : (
-          <div className="mb-12 rounded-xl bg-purple-100 p-8 text-center dark:bg-zinc-800">
+          <div className="mb-12 rounded-xl bg-teal-100/60 p-8 text-center dark:bg-slate-800">
             <p className="mb-4 text-lg">
               Please{" "}
               <Link
                 href={`/login?next=${encodeURIComponent(
                   typeof window !== "undefined" ? window.location.pathname : "/"
                 )}`}
-                className="font-semibold text-purple-700 underline dark:text-blue-400"
+                className="font-semibold text-teal-700 underline dark:text-cyan-400"
               >
                 log in
               </Link>{" "}
@@ -174,14 +180,16 @@ export default function QuestionDetailPage() {
                 typeof window !== "undefined" ? window.location.pathname : "/"
               )}`}
             >
-              <Button>Log in</Button>
+              <Button className="bg-teal-600 hover:bg-teal-700 dark:bg-cyan-600 dark:hover:bg-cyan-700">
+                Log in
+              </Button>
             </Link>
           </div>
         )}
 
         {/* Submit Answer */}
         {loggedIn && (
-          <Card className="bg-white dark:bg-zinc-800">
+          <Card className="bg-white dark:bg-slate-800 border border-teal-100 dark:border-slate-700">
             <CardContent className="p-6">
               <h3 className="mb-4 text-lg font-semibold">Submit Your Answer</h3>
 
@@ -192,7 +200,10 @@ export default function QuestionDetailPage() {
                   placeholder="Write your answer here..."
                 />
                 <div className="flex justify-end">
-                  <Button size="lg" className="px-8">
+                  <Button
+                    size="lg"
+                    className="px-8 bg-teal-600 hover:bg-teal-700 dark:bg-cyan-600 dark:hover:bg-cyan-700"
+                  >
                     Submit
                   </Button>
                 </div>

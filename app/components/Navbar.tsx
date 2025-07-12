@@ -28,7 +28,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="border-b bg-[#dbaf57] dark:bg-black backdrop-blur">
+    <header className="  dark:bg-slate-900 backdrop-blur">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="text-2xl font-bold">

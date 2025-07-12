@@ -59,7 +59,7 @@ export default function LoginPage() {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.message || "Invalid credentials");
 
-      /* — simple session flag — */
+      // simple session flag
       if (typeof window !== "undefined")
         localStorage.setItem("stackit_loggedIn", "1");
 
@@ -77,8 +77,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#dbaf57] text-black dark:bg-zinc-900 dark:text-white px-4">
-      <Card className="w-full max-w-md bg-white dark:bg-zinc-800">
+    <div className="flex min-h-screen items-center justify-center  dark:bg-slate-900 dark:text-white px-4">
+      <Card className="w-full max-w-md bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-2xl">
             <User className="h-6 w-6" /> Log in to StackIt
@@ -131,7 +131,11 @@ export default function LoginPage() {
             </div>
 
             {/* SUBMIT */}
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button
+              type="submit"
+              className="w-full bg-teal-600 hover:bg-teal-700 dark:bg-cyan-600 dark:hover:bg-cyan-700"
+              disabled={loading}
+            >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Log In
             </Button>
