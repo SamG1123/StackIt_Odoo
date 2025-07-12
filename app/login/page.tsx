@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { z } from "zod";
 
 import { Input } from "@/components/ui/input";
@@ -21,6 +21,9 @@ const LoginSchema = z.object({
 
 export default function LoginPage() {
   const router = useRouter();
+  const search = useSearchParams();
+  const nextUrl = search.get("next") || "/";
+
   const { toast } = useToast();
 
   const [loading, setLoading] = useState(false);
@@ -35,7 +38,6 @@ export default function LoginPage() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    /* client check */
     const parsed = LoginSchema.safeParse(form);
     if (!parsed.success) {
       toast({
@@ -55,14 +57,14 @@ export default function LoginPage() {
       });
 
       const data = await res.json().catch(() => ({}));
-
       if (!res.ok) throw new Error(data.message || "Invalid credentials");
 
-      /* store token (adjust if using cookies/next‑auth) */
-      if (data.token) localStorage.setItem("stackit_token", data.token);
+      /* — simple session flag — */
+      if (typeof window !== "undefined")
+        localStorage.setItem("stackit_loggedIn", "1");
 
       toast({ title: "Logged in!" });
-      router.push("/");
+      router.push(nextUrl);
     } catch (err: any) {
       toast({
         variant: "destructive",

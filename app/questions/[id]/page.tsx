@@ -1,21 +1,14 @@
-/* app/questions/[id]/page.tsx  (rename/relocate as needed) */
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import {
-  Bell,
-  User,
-  ChevronUp,
-  ChevronDown,
-  Check,
-  MessageSquare,
-} from "lucide-react";
+import { ChevronUp, ChevronDown, Check, MessageSquare } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { RichTextEditor } from "@/components/rich-text-editor";
+import { isLoggedIn } from "@/lib/auth";
 
 /* ── mock data ─────────────────────────────────────────── */
 const question = {
@@ -51,6 +44,11 @@ const initialAnswers = [
 export default function QuestionDetailPage() {
   const [answers, setAnswers] = useState(initialAnswers);
   const [newAnswer, setNewAnswer] = useState("");
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setLoggedIn(isLoggedIn());
+  }, []);
 
   const handleVote = (id: number, dir: "up" | "down") => {
     setAnswers((prev) =>
@@ -62,9 +60,6 @@ export default function QuestionDetailPage() {
 
   return (
     <div className="min-h-screen bg-[#dbaf57] text-black dark:bg-zinc-900 dark:text-white">
-      {/* ── header ───────────────────────────────────────── */}
-
-      {/* ── content ─────────────────────────────────────── */}
       <div className="container mx-auto px-4 py-6">
         {/* breadcrumb */}
         <div className="mb-6 text-sm text-gray-600 dark:text-gray-400">
@@ -99,82 +94,112 @@ export default function QuestionDetailPage() {
           </CardContent>
         </Card>
 
-        {/* answers */}
+        {/* Answers section */}
         <h2 className="mb-4 text-xl font-semibold">
           Answers ({answers.length})
         </h2>
 
-        <div className="mb-8 space-y-6">
-          {answers.map((a) => (
-            <Card key={a.id} className="bg-white dark:bg-zinc-800">
-              <CardContent className="p-6">
-                <div className="flex gap-4">
-                  {/* vote column */}
-                  <div className="flex flex-col items-center gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => handleVote(a.id, "up")}
-                    >
-                      <ChevronUp className="h-4 w-4" />
-                    </Button>
-                    <span className="font-medium">{a.votes}</span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => handleVote(a.id, "down")}
-                    >
-                      <ChevronDown className="h-4 w-4" />
-                    </Button>
-                    {a.isAccepted && (
-                      <Check className="mt-2 h-5 w-5 text-green-600" />
-                    )}
-                  </div>
-
-                  {/* answer body */}
-                  <div className="flex-1">
-                    <div className="prose prose-sm max-w-none mb-4 dark:prose-invert">
-                      {a.content.split("\n").map((line, idx) => (
-                        <p key={idx}>{line}</p>
-                      ))}
-                    </div>
-
-                    <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
-                      <span>{a.user}</span>
-                      <span>{a.timeAgo}</span>
-                      <Button variant="ghost" size="sm" className="h-auto p-0">
-                        <MessageSquare className="mr-1 h-4 w-4" />
-                        Comment
+        {loggedIn ? (
+          <div className="mb-8 space-y-6">
+            {answers.map((a) => (
+              <Card key={a.id} className="bg-white dark:bg-zinc-800">
+                <CardContent className="p-6">
+                  <div className="flex gap-4">
+                    {/* vote column */}
+                    <div className="flex flex-col items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => handleVote(a.id, "up")}
+                      >
+                        <ChevronUp className="h-4 w-4" />
                       </Button>
+                      <span className="font-medium">{a.votes}</span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => handleVote(a.id, "down")}
+                      >
+                        <ChevronDown className="h-4 w-4" />
+                      </Button>
+                      {a.isAccepted && (
+                        <Check className="mt-2 h-5 w-5 text-green-600" />
+                      )}
+                    </div>
+
+                    {/* answer body */}
+                    <div className="flex-1">
+                      <div className="prose prose-sm max-w-none mb-4 dark:prose-invert">
+                        {a.content.split("\n").map((line, idx) => (
+                          <p key={idx}>{line}</p>
+                        ))}
+                      </div>
+
+                      <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                        <span>{a.user}</span>
+                        <span>{a.timeAgo}</span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-auto p-0"
+                        >
+                          <MessageSquare className="mr-1 h-4 w-4" />
+                          Comment
+                        </Button>
+                      </div>
                     </div>
                   </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="mb-12 rounded-xl bg-purple-100 p-8 text-center dark:bg-zinc-800">
+            <p className="mb-4 text-lg">
+              Please{" "}
+              <Link
+                href={`/login?next=${encodeURIComponent(
+                  typeof window !== "undefined" ? window.location.pathname : "/"
+                )}`}
+                className="font-semibold text-purple-700 underline dark:text-blue-400"
+              >
+                log in
+              </Link>{" "}
+              to view answers.
+            </p>
+            <Link
+              href={`/login?next=${encodeURIComponent(
+                typeof window !== "undefined" ? window.location.pathname : "/"
+              )}`}
+            >
+              <Button>Log in</Button>
+            </Link>
+          </div>
+        )}
+
+        {/* Submit Answer */}
+        {loggedIn && (
+          <Card className="bg-white dark:bg-zinc-800">
+            <CardContent className="p-6">
+              <h3 className="mb-4 text-lg font-semibold">Submit Your Answer</h3>
+
+              <div className="space-y-4">
+                <RichTextEditor
+                  value={newAnswer}
+                  onChange={setNewAnswer}
+                  placeholder="Write your answer here..."
+                />
+                <div className="flex justify-end">
+                  <Button size="lg" className="px-8">
+                    Submit
+                  </Button>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* submit answer */}
-        <Card className="bg-white dark:bg-zinc-800">
-          <CardContent className="p-6">
-            <h3 className="mb-4 text-lg font-semibold">Submit Your Answer</h3>
-
-            <div className="space-y-4">
-              <RichTextEditor
-                value={newAnswer}
-                onChange={setNewAnswer}
-                placeholder="Write your answer here..."
-              />
-              <div className="flex justify-end">
-                <Button size="lg" className="px-8">
-                  Submit
-                </Button>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
