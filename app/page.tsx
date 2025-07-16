@@ -234,13 +234,27 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* (static) pagination */}
         <div className="flex items-center justify-center gap-2 pt-4">
-          <Button size="icon" disabled>
+          <Button
+            size="icon"
+            disabled
+            className="bg-gray-200 text-gray-500 dark:bg-slate-700 dark:text-gray-400"
+          >
             <ChevronLeft className="h-5 w-5" />
           </Button>
-          <Button size="icon">1</Button>
-          <Button size="icon" disabled>
+
+          <Button
+            size="icon"
+            className="bg-purple-600 text-white hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800"
+          >
+            1
+          </Button>
+
+          <Button
+            size="icon"
+            disabled
+            className="bg-gray-200 text-gray-500 dark:bg-slate-700 dark:text-gray-400"
+          >
             <ChevronRight className="h-5 w-5" />
           </Button>
         </div>
